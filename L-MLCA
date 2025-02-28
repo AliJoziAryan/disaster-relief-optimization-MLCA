@@ -1,0 +1,104 @@
+import random
+import numpy as np
+
+class LMLCA:
+    def __init__(self, warehouses, vehicles, orders, num_teams=10, num_leagues=3, num_iterations=50):
+        """
+        Initialize the L-MLCA algorithm.
+        
+        :param warehouses: List of warehouses
+        :param vehicles: List of vehicles
+        :param orders: List of relief orders
+        :param num_teams: Number of teams (solutions) to generate
+        :param num_leagues: Number of leagues (subsets of teams)
+        :param num_iterations: Number of iterations for the L-MLCA process
+        """
+        self.warehouses = warehouses
+        self.vehicles = vehicles
+        self.orders = orders
+        self.num_teams = num_teams
+        self.num_leagues = num_leagues
+        self.num_iterations = num_iterations
+
+        self.teams = self.initialize_teams()
+
+    def initialize_teams(self):
+        """
+        Initialize random teams (solutions). Each team is a list of relief order assignments to vehicles.
+        """
+        teams = []
+        for _ in range(self.num_teams):
+            team = [random.choice(self.vehicles) for _ in range(len(self.orders))]
+            teams.append(team)
+        return teams
+
+    def evaluate_team(self, team):
+        """
+        Evaluate the fitness of a team. This is where the objective function (e.g., total delivery time) is computed.
+        For simplicity, we assume a random fitness value, but this should be replaced with an actual evaluation function.
+        
+        :param team: List of order assignments to vehicles (a single solution)
+        :return: Fitness value (lower is better)
+        """
+        # For now, we simulate the fitness (you should replace this with your actual evaluation logic)
+        return random.uniform(0, 100)
+
+    def compete_in_national_league(self, league):
+        """
+        Compete the teams within a league and return the top-performing teams.
+        
+        :param league: List of teams (solutions)
+        :return: List of top teams based on fitness
+        """
+        league_fitness = [(team, self.evaluate_team(team)) for team in league]
+        league_fitness.sort(key=lambda x: x[1])  # Sort by fitness value (ascending)
+        top_teams = [team for team, _ in league_fitness[:len(league) // 2]]  # Select top half
+        return top_teams
+
+    def compete_in_league_based_competition(self, teams):
+        """
+        After the national leagues, all top teams compete in a single league.
+        
+        :param teams: List of top teams from the national leagues
+        :return: The champion of the league-based competition
+        """
+        league_fitness = [(team, self.evaluate_team(team)) for team in teams]
+        league_fitness.sort(key=lambda x: x[1])  # Sort by fitness value (ascending)
+        return league_fitness[0][0]  # Return the team with the best fitness
+
+    def run(self):
+        """
+        Run the L-MLCA algorithm for the specified number of iterations.
+        """
+        for iteration in range(self.num_iterations):
+            print(f"Iteration {iteration + 1}/{self.num_iterations}")
+            
+            # Step 1: Divide teams into national leagues
+            leagues = [self.teams[i:i + len(self.teams) // self.num_leagues] for i in range(0, len(self.teams), len(self.teams) // self.num_leagues)]
+            
+            # Step 2: Compete in national leagues
+            top_teams = []
+            for league in leagues:
+                top_teams.extend(self.compete_in_national_league(league))
+            
+            # Step 3: Compete in a league-based competition
+            champion = self.compete_in_league_based_competition(top_teams)
+            print(f"Champion of this iteration: {champion}")
+
+            # Replace teams with the top-performing teams and champion
+            self.teams = top_teams + [champion]
+
+        # Return the best solution found after all iterations
+        best_solution = min(self.teams, key=self.evaluate_team)
+        return best_solution
+
+
+# Example usage
+if __name__ == "__main__":
+    warehouses = ["Warehouse 1", "Warehouse 2"]
+    vehicles = ["Vehicle 1", "Vehicle 2"]
+    orders = ["Order 1", "Order 2", "Order 3", "Order 4", "Order 5"]
+    
+    l_mlca = LMLCA(warehouses, vehicles, orders, num_teams=10, num_leagues=3, num_iterations=50)
+    best_solution = l_mlca.run()
+    print(f"Best solution found: {best_solution}")
