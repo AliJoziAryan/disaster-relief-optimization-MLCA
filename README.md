@@ -21,6 +21,7 @@ P-MLCA: A variant with a playoff system that involves direct elimination rounds 
 
 
 **Overview of the MLCA**
+
 The Multiple League Championship Algorithm (MLCA) is inspired by a championship-style competition. Here's a breakdown of the steps based on the paper:
 
 1. Initialization: Create a set of solutions, each represented as a team. These teams are then divided into multiple "national leagues."
@@ -31,6 +32,7 @@ The Multiple League Championship Algorithm (MLCA) is inspired by a championship-
 
 
 **L-MLCA Algorithm Overview**
+
 League-based Multiple League Championship Algorithm (L-MLCA) in Python. 
 This version of MLCA uses a single league structure to select the champion, rather than progressing through group stages or playoff rounds as in the regular MLCA.
 
@@ -38,3 +40,13 @@ This version of MLCA uses a single league structure to select the champion, rath
 2. Competition in National Leagues: Teams first compete in national leagues, and the top teams from each league proceed to the elite league.
 3. Elite League: All the top teams are placed into a single elite league and compete against each other to determine the champion.
 4. Iteration: The process is repeated iteratively, evolving the teams over several iterations.
+
+
+**P-MLCA Algorithm Overview**
+
+P-MLCA (Playoff-based Multiple League Championship Algorithm) is the third variant of the MLCA.
+
+1. Initialization: Like the regular MLCA, we generate a population of solutions (teams) and divide them into multiple national leagues.
+2. Competition in National Leagues: Teams compete within their respective leagues, and the top teams advance to the playoff stage.
+3. Playoff: Instead of progressing through multiple group stages, the top teams from each national league move directly into the playoff rounds, where they compete in a knockout style until one champion remains.
+4. Iteration: The algorithm iterates through multiple rounds, evolving teams and selecting the best-performing solutions.
