@@ -23,8 +23,8 @@ P-MLCA: A variant with a playoff system that involves direct elimination rounds 
 **Overview of the MLCA**
 The Multiple League Championship Algorithm (MLCA) is inspired by a championship-style competition. Here's a breakdown of the steps based on the paper:
 
-Initialization: Create a set of solutions, each represented as a team. These teams are then divided into multiple "national leagues."
-National League Competition: Within each league, teams compete against each other, and the best-performing teams are selected to move forward.
-Group Stage: After the national league phase, the top teams from each league move to the group stage.
-Playoff: The best teams from the group stage enter a playoff round to determine the champion.
-Iterate: After finding a champion, the algorithm returns the teams to the national league for the next iteration.
+1. Initialization: Create a set of solutions, each represented as a team. These teams are then divided into multiple "national leagues."
+2. National League Competition: Within each league, teams compete against each other, and the best-performing teams are selected to move forward.
+3. Group Stage: After the national league phase, the top teams from each league move to the group stage.
+4. Playoff: The best teams from the group stage enter a playoff round to determine the champion.
+5. Iterate: After finding a champion, the algorithm returns the teams to the national league for the next iteration.
