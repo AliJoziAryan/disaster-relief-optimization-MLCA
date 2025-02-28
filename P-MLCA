@@ -1,0 +1,113 @@
+import random
+import numpy as np
+
+class PMLCA:
+    def __init__(self, warehouses, vehicles, orders, num_teams=10, num_leagues=3, num_iterations=50):
+        """
+        Initialize the P-MLCA algorithm.
+        
+        :param warehouses: List of warehouses
+        :param vehicles: List of vehicles
+        :param orders: List of relief orders
+        :param num_teams: Number of teams (solutions) to generate
+        :param num_leagues: Number of leagues (subsets of teams)
+        :param num_iterations: Number of iterations for the P-MLCA process
+        """
+        self.warehouses = warehouses
+        self.vehicles = vehicles
+        self.orders = orders
+        self.num_teams = num_teams
+        self.num_leagues = num_leagues
+        self.num_iterations = num_iterations
+
+        self.teams = self.initialize_teams()
+
+    def initialize_teams(self):
+        """
+        Initialize random teams (solutions). Each team is a list of relief order assignments to vehicles.
+        """
+        teams = []
+        for _ in range(self.num_teams):
+            team = [random.choice(self.vehicles) for _ in range(len(self.orders))]
+            teams.append(team)
+        return teams
+
+    def evaluate_team(self, team):
+        """
+        Evaluate the fitness of a team. This is where the objective function (e.g., total delivery time) is computed.
+        For simplicity, we assume a random fitness value, but this should be replaced with an actual evaluation function.
+        
+        :param team: List of order assignments to vehicles (a single solution)
+        :return: Fitness value (lower is better)
+        """
+        # For now, we simulate the fitness (you should replace this with your actual evaluation logic)
+        return random.uniform(0, 100)
+
+    def compete_in_national_league(self, league):
+        """
+        Compete the teams within a league and return the top-performing teams.
+        
+        :param league: List of teams (solutions)
+        :return: List of top teams based on fitness
+        """
+        league_fitness = [(team, self.evaluate_team(team)) for team in league]
+        league_fitness.sort(key=lambda x: x[1])  # Sort by fitness value (ascending)
+        top_teams = [team for team, _ in league_fitness[:len(league) // 2]]  # Select top half
+        return top_teams
+
+    def play_off(self, teams):
+        """
+        Conduct the playoff competition and select the best team.
+        
+        :param teams: List of top teams from the national leagues
+        :return: The champion team
+        """
+        random.shuffle(teams)  # Shuffle teams to randomize matches
+        while len(teams) > 1:
+            next_round = []
+            for i in range(0, len(teams), 2):
+                team1, team2 = teams[i], teams[i+1]
+                # Compete between two teams and select the better one
+                if self.evaluate_team(team1) < self.evaluate_team(team2):
+                    next_round.append(team1)
+                else:
+                    next_round.append(team2)
+            teams = next_round
+        return teams[0]
+
+    def run(self):
+        """
+        Run the P-MLCA algorithm for the specified number of iterations.
+        """
+        for iteration in range(self.num_iterations):
+            print(f"Iteration {iteration + 1}/{self.num_iterations}")
+            
+            # Step 1: Divide teams into national leagues
+            leagues = [self.teams[i:i + len(self.teams) // self.num_leagues] for i in range(0, len(self.teams), len(self.teams) // self.num_leagues)]
+            
+            # Step 2: Compete in national leagues
+            top_teams = []
+            for league in leagues:
+                top_teams.extend(self.compete_in_national_league(league))
+            
+            # Step 3: Conduct the playoff competition
+            champion = self.play_off(top_teams)
+            print(f"Champion of this iteration: {champion}")
+
+            # Replace teams with the top-performing teams and champion
+            self.teams = top_teams + [champion]
+
+        # Return the best solution found after all iterations
+        best_solution = min(self.teams, key=self.evaluate_team)
+        return best_solution
+
+
+# Example usage
+if __name__ == "__main__":
+    warehouses = ["Warehouse 1", "Warehouse 2"]
+    vehicles = ["Vehicle 1", "Vehicle 2"]
+    orders = ["Order 1", "Order 2", "Order 3", "Order 4", "Order 5"]
+    
+    p_mlca = PMLCA(warehouses, vehicles, orders, num_teams=10, num_leagues=3, num_iterations=50)
+    best_solution = p_mlca.run()
+    print(f"Best solution found: {best_solution}")
